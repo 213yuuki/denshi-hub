@@ -30,6 +30,7 @@ Podstawowy zamysł projektu:
 
 ```md
 ![Wyszukiwanie](./screens/search.png)
+![Strona Serii](./screens/naruto.png)
 ![Player](./screens/player.png)
 ```
 
@@ -39,7 +40,7 @@ Nie wiem czy będę rozwijał projekt dalej, miło by mi było gdyby ktoś z teg
 
 
 
-## 🚀 Roadmap (opcjonalnie)
+## 🚀 Roadmap (potencjalnie)
 
 - ⏳ Zapisywanie watchtime'u
 - ⭐ Lista ulubionych
