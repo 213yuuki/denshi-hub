@@ -29,9 +29,9 @@ Podstawowy zamysł projektu:
 
 
 ```md
-![Wyszukiwanie](https://github.com/213yuuki/denshi-hub/blob/main/screens/search.png)
-![Strona Serii](https://github.com/213yuuki/denshi-hub/blob/main/screens/naruto.png)
-![Player](https://github.com/213yuuki/denshi-hub/blob/main/screens/player.png)
+![Wyszukiwanie](/screens/search.png?raw=true)
+![Strona Serii](/screens/naruto.png?raw=true)
+![Player](/screens/player.png?raw=true)
 ```
 
 ### 📝 Status projektu
