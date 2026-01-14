@@ -49,9 +49,6 @@ Nie wiem czy będę rozwijał projekt dalej, miło by mi było gdyby ktoś z teg
 ## ⚠️ Disclaimer
 
 Denshi Hub **nie hostuje żadnych plików wideo**. Aplikacja jedynie agreguje publicznie dostępne źródła.
-
-
-
 Przy tworzeniu projektu najpierw zacząłem od czystego htmla - aby pominąć cors użyłem proxy które zostawiłem w plikach jak i wersji skompilowanej.
 
 ---
