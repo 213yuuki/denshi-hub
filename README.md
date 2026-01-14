@@ -27,12 +27,10 @@ Podstawowy zamysł projektu:
 ### 🖼️ Screeny
 
 
-
-```md
 ![Wyszukiwanie](search.png?raw=true)
 ![Strona Serii](naruto.png?raw=true)
 ![Player](player.png?raw=true)
-```
+
 
 ### 📝 Status projektu
 
