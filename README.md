@@ -4,8 +4,6 @@
 
 ---
 
-## 🇵🇱 Polski
-
 ### 📖 O projekcie
 
 Podstawowy zamysł projektu:
@@ -57,6 +55,4 @@ Denshi Hub **nie hostuje żadnych plików wideo**. Aplikacja jedynie agreguje pu
 Przy tworzeniu projektu najpierw zacząłem od czystego htmla - aby pominąć cors użyłem proxy które zostawiłem w plikach jak i wersji skompilowanej.
 
 ---
-
-##
 
