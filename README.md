@@ -29,9 +29,9 @@ Podstawowy zamysł projektu:
 
 
 ```md
-![Wyszukiwanie](/screens/search.png?raw=true)
-![Strona Serii](/screens/naruto.png?raw=true)
-![Player](/screens/player.png?raw=true)
+![Wyszukiwanie](search.png?raw=true)
+![Strona Serii](naruto.png?raw=true)
+![Player](player.png?raw=true)
 ```
 
 ### 📝 Status projektu
