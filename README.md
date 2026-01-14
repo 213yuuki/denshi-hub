@@ -1,3 +1,5 @@
+wiem ze playery sie pierdola - niektore dzialaja niektore nie, moze kiedys sie tym zajme
+
 # 🎌 Denshi Hub
 
 > Co to Denshi Hub? Bardzo prosty player do anime dla polskich fanów, zrobiłem go samemu z użyciem AI jako mały projekt na boku by sprawdzić jak długo zajmie mi stworzenie czegoś takiego - jest to pierwszy raz kiedy korzystam z electrona do czegoś więcej niż paskudnego kalkulatora i zarazem pierwszy raz jak próbuje swoich sił w javascriptcie. A skąd wziąłem pomysł na nazwę? Denshi z japońskiego to electron (przynajmniej według google translator). 
