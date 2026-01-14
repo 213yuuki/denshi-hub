@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denshi Hub v1</title>
+
+    <style>
+        /* kocham ai za gotowe ui */
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #080808;
+            color: #eeeeee;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .search-wrapper {
+            text-align: center;
+            width: 90%;
+            max-width: 500px;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 25px;
+            color: #ff4500;
+            letter-spacing: -2px;
+            text-shadow: 0 0 30px rgba(255, 69, 0, 0.2);
+        }
+
+        h1 span { color: white; }
+
+        .search-box {
+            display: flex;
+            background: #151515;
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid #252525;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .search-box:focus-within {
+            border-color: #ff4500;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(255, 69, 0, 0.15);
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px 18px;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        input[type="button"] {
+            background: #ff4500;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="button"]:hover {
+            background: #ff5714;
+            box-shadow: 0 0 15px rgba(255, 69, 0, 0.4);
+        }
+
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(12px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-content {
+            background-color: #121212;
+            margin: 5% auto;
+            padding: 25px;
+            width: 85%;
+            max-width: 550px;
+            max-height: 75vh;
+            overflow-y: auto;
+            border-radius: 20px;
+            border: 1px solid #222;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #222;
+        }
+
+        .close-btn {
+            font-size: 30px;
+            color: #555;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .close-btn:hover { color: #ff4500; }
+
+        .anime-card {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 12px;
+            background: #1a1a1a;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .anime-card:hover {
+            background: #222;
+            border-color: #ff4500;
+            transform: translateX(5px);
+        }
+
+        .anime-card img {
+            width: 55px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #111;
+        }
+
+        .anime-info h4 { 
+            margin: 0; 
+            color: #fff; 
+            font-size: 1.05rem;
+        }
+
+        .modal-content::-webkit-scrollbar { width: 6px; }
+        .modal-content::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        .modal-content::-webkit-scrollbar-thumb:hover { background: #ff4500; }
+    </style>
+</head>
+<body>
+    <script>
+        async function apiCall(var1) {
+            const proxy = "https://corsproxy.io?";
+            const url = "https://api.docchi.pl/v1/series/related/";
+                try {
+                    const response = await fetch(proxy + url + encodeURIComponent(var1));
+
+                    if (!response.ok){
+                        throw new Error(`Response status: ${response.status}. Download failed.`);
+                    }
+
+                    const json = await response.json();
+                    console.log(json);
+                    showModal(json);
+                } 
+                
+                catch (error) {
+                    console.error(error.message);
+                }
+        }
+
+        function showModal(data){
+            const listContainer = document.getElementById("resultsList");
+            const modal = document.getElementById("myModal");
+
+            listContainer.innerHTML = "";
+
+            data.forEach(anime => {
+                const card = document.createElement("div");
+                card.className = "anime-card";
+
+                card.innerHTML = `
+                    <img src="${anime.cover}" alt="poster">
+                    <div class="anime-info">
+                        <h4>${anime.title}</h4>
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    window.location.href = `details.html?slug=${anime.slug}`;
+                };
+
+                listContainer.appendChild(card);
+            });
+
+            modal.style.display = "block";
+        }
+
+        function searchFunc(){
+            var nazwa = document.getElementById("nazwa").value;
+
+            if(nazwa !== ""){
+                apiCall(nazwa);
+            }
+        }
+    </script>
+
+    <div class="search-wrapper">
+        <h1>DENSHI<span>HUB</span></h1>
+        <div class="search-box">
+            <input type="text" id="nazwa" placeholder="Wyszukaj anime..." onkeypress="if(event.key==='Enter') searchFunc()">
+            <input type="button" value="Szukaj" onclick="searchFunc()">
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 style="margin:0; color:#ff4500;">Znalezione serie</h3>
+                <span class="close-btn" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+            </div>
+            <div id="resultsList"></div>
+        </div>
+    </div>
+
+</body>
+</html>

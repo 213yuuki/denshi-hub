@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denshi Hub v1</title>
+
+    <style>
+        /* kocham ai za gotowe ui */
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #080808;
+            color: #eeeeee;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-back {
+            background: #151515;
+            color: #ff4500;
+            border: 1px solid #252525;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+        }
+
+        .btn-back:hover {
+            background: #ff4500;
+            color: white;
+            box-shadow: 0 0 15px rgba(255, 69, 0, 0.3);
+        }
+
+        .anime-header {
+            display: flex;
+            gap: 40px;
+            background: #111111;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid #222;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+        }
+
+        .poster {
+            width: 260px;
+            min-width: 260px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.8);
+            object-fit: cover;
+            border: 1px solid #333;
+        }
+
+        .info h1 {
+            margin-top: 0;
+            color: #ff4500;
+            font-size: 2.2rem;
+            letter-spacing: -1px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .stats p { margin: 0; color: #bbb; }
+        .stats strong { color: #ff4500; }
+
+        .description {
+            color: #ccc;
+            font-size: 1rem;
+            max-height: 150px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .episodes-section {
+            margin-top: 50px;
+        }
+
+        .episodes-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            padding-left: 5px;
+            border-left: 4px solid #ff4500;
+        }
+
+        .episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .episode-card {
+            background: #111;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid #222;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .episode-card:hover {
+            transform: translateY(-8px);
+            border-color: #ff4500;
+            box-shadow: 0 10px 25px rgba(255, 69, 0, 0.2);
+        }
+
+        .ep-thumbnail-container {
+            position: relative;
+            width: 100%;
+            height: 150px;
+            background: #050505;
+        }
+
+        .ep-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .episode-card:hover .ep-thumbnail {
+            transform: scale(1.1);
+        }
+
+        .ep-details {
+            padding: 15px;
+            text-align: center;
+            background: #151515;
+        }
+
+        .ep-title {
+            margin: 0;
+            font-weight: bold;
+            color: #eee;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .anime-header { flex-direction: column; align-items: center; text-align: center; }
+            .stats { grid-template-columns: 1fr; }
+            .poster { width: 200px; min-width: 200px; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #080808; }
+        ::-webkit-scrollbar-thumb { background: #252525; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff4500; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="btn-back" onclick="window.history.back()">⬅ Powrót</button>
+
+        <div id="content">
+            <p>Ładowanie szczegółów... (przy dużej ilości odcinków potrwa to krótką chwile)</p>
+        </div>
+    </div>
+
+    <script>
+        async function loadDetails() {
+            const params = new URLSearchParams(window.location.search);
+            const slug = params.get('slug');
+
+            if (!slug) return;
+
+            const proxy = "https://corsproxy.io?";
+            const urlSerie = `https://api.docchi.pl/v1/series/find/${slug}`;
+            const urlEpcount = `https://api.docchi.pl/v1/episodes/count/${slug}`;
+            
+
+            try {
+                const [resSeries, resEpisodes] = await Promise.all([
+                    fetch(proxy + urlSerie),
+                    fetch(proxy + urlEpcount)
+                ]);
+
+                if (!resSeries.ok || !resEpisodes.ok) {
+                    throw new Error("Jeden z punktów API zwrócił błąd");
+                }
+
+                const [anime, episodes] = await Promise.all([
+                    resSeries.json(),
+                    resEpisodes.json()
+                ]);
+
+                const finalAnimeData = Array.isArray(anime) ? anime[0] : anime;
+
+                if (!finalAnimeData) {
+                    throw new Error("Nie znaleziono danych serii");
+                }
+
+                renderDetails(anime, episodes, slug);
+            } 
+            catch (error) {
+                console.error(error);
+                document.getElementById('content').innerHTML = "Nie udało się pobrać danych, spróbuj ponownie później";
+            }
+        }
+
+        function renderDetails(anime, episodes, slug) {
+            const container = document.getElementById('content');
+
+            container.innerHTML = `
+                <div class="anime-header">
+                    <img src="${anime.cover}" alt="Poster" class="poster">
+                    <div class="info">
+                        <h1>${anime.title}</h1>
+                        <div class="stats">
+                            <p><strong>Angielski tytuł.:</strong> ${anime.title_en || 'Brak'}</p>
+                            <p><strong>Liczba odcinków.:</strong> ${anime.episodes || '?'}</p>
+                            <p><strong>Gatunki:</strong> ${anime.genres || 'Brak'}</p>
+                        </div>
+                        <p>${anime.description || 'Brak opisu.'}</p>
+                    </div>
+                </div>
+
+                <div class="episodes-section">
+                    <h2>Lista odcinków</h2>
+                    <div class="episodes-grid" id="episodesList">
+                    </div>
+                </div>
+            `;
+
+            const epList = document.getElementById('episodesList');
+            
+            episodes.forEach(ep => {
+                const card = document.createElement('div');
+                card.className = 'episode-card';
+
+                const thumbnail = ep.bg ? ep.bg : "null.png";
+
+
+                card.innerHTML = `
+                    <div class="ep-thumbnail-container">
+                        <img src="${thumbnail}" class="ep-thumbnail" alt="Odcinek ${ep.anime_episode_number}">
+                    </div>
+                    <div class="ep-details">
+                        <p class="ep-title">Odcinek ${ep.anime_episode_number}</p>
+                    </div>
+                `;
+
+                card.onclick = () => {
+                    window.location.href = `player.html?slug=${slug}&num=${ep.anime_episode_number}`;
+                }
+                epList.appendChild(card);
+            });
+        }
+
+        loadDetails();
+    </script>
+</body>
+</html>
